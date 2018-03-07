@@ -77,14 +77,14 @@ public class MazeGenerator extends JFrame {
         
         
         //listeners
-        newMazeButton.addActionListener(new ActionListener(){
+        newMazeButton.addActionListener(new ActionListener(){ //only action listener is on the 'New Maze Button' in the bottom
            public void actionPerformed(ActionEvent e){
                newMaze();
            } 
         });
         
         addKeyListener(new KeyAdapter() {
-            public void keyReleased(KeyEvent e){
+            public void keyReleased(KeyEvent e){ //waits for a key to be pressed; remembers which key
                 //char c = e.getKeyChar();
                 //System.out.println(c);
                 int keyCode = e.getKeyCode();
@@ -123,12 +123,12 @@ public class MazeGenerator extends JFrame {
         
     }
     
-    private void moveTo(int nextRow, int nextCol, 
+    private void moveTo(int nextRow, int nextCol, //write this
             int firstDirection, int secondDirection){
         
     }
     
-    private void newMaze (){
+    private void newMaze (){ //write this
         mazePanel.removeAll();
         mazePanel.setLayout(new GridLayout(rows, cols));
         grid = new Cell [rows][cols];
@@ -140,7 +140,7 @@ public class MazeGenerator extends JFrame {
             }
         }
         
-        //generateMaze();
+        //generateMaze(); //write this? //think about algorithm that generates the maze
         row = 0;
         col = 0;
         endRow = rows - 1;

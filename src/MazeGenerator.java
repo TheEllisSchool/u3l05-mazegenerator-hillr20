@@ -20,8 +20,8 @@ import javax.swing.UIManager;
 
 public class MazeGenerator extends JFrame {
     
-    private int rows = 5;
-    private int cols = 5;
+    private int rows = 20;
+    private int cols = 20;
     private Cell [][] grid = new Cell[rows][cols];
     private JPanel mazePanel = new JPanel();
     private int row = 0;
@@ -41,6 +41,7 @@ public class MazeGenerator extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         
         
+        
     }
     
     private void initGUI(){
@@ -52,14 +53,15 @@ public class MazeGenerator extends JFrame {
         JLabel titleLabel = new JLabel("Maze");
         titleLabel.setBackground(Color.BLACK);
         titleLabel.setOpaque(true);
-        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setForeground(Color.MAGENTA);
         titleLabel.setFont(titleFont);
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
         titlePanel.add(titleLabel);
         
         //center panel
         JPanel centerPanel = new JPanel();
-        centerPanel.setBackground(Color.BLACK);
+        centerPanel.setBackground(Color.MAGENTA);
+        //OMG I'M MISSING CODE HERE AND I DON'T KNOW WHAT IT IS!!!
         add(centerPanel, BorderLayout.CENTER);
         
         //maze panel
@@ -85,30 +87,43 @@ public class MazeGenerator extends JFrame {
         
         addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e){ //waits for a key to be pressed; remembers which key
-                //char c = e.getKeyChar();
-                //System.out.println(c);
+                char c = e.getKeyChar();
+                System.out.println(c);
                 int keyCode = e.getKeyCode();
-                //moveBall(keyCode);
+                moveBall(keyCode);
             }       
-        });        
+        }); 
+        
     }
+    
     
     private void moveBall(int direction){
         switch (direction){
             case KeyEvent.VK_UP:
-                
+            	if (!grid[row][col].isWall(Cell.TOP)){//! is important, means 'not'
+            		moveTo(row - 1, col, Cell.TOP, Cell.BOTTOM); //takes next row, next column, 
+            	}
                 
                 break;
             case KeyEvent.VK_DOWN:
-                
-                
-                break;
-            case KeyEvent.VK_LEFT:
-                
+            	//move one cell down if there's no wall
+            	if (!grid[row][col].isWall(Cell.BOTTOM)){//! is important, means 'not'
+            		moveTo(row + 1, col, Cell.BOTTOM, Cell.TOP); //takes next row, next column, 
+            	}
+            	
                 
                 break;
             case KeyEvent.VK_RIGHT:
+            	if (!grid[row][col].isWall(Cell.RIGHT)){//! is important, means 'not'
+            		moveTo(row, col+1, Cell.RIGHT, Cell.LEFT); //takes next row, next column, 
+            	}
                 
+                break;
+            case KeyEvent.VK_LEFT:
+            	if (!grid[row][col].isWall(Cell.LEFT)){//! is important, means 'not'
+            		moveTo(row, col-1, Cell.LEFT, Cell.RIGHT); //takes next row, next column, 
+            		
+            	}
                 
                 break;
         }
@@ -117,6 +132,7 @@ public class MazeGenerator extends JFrame {
         if (row == endRow && col == endCol){
             String message = "You won!";
             JOptionPane.showMessageDialog(null, message);
+            newMaze();
         }
                 
         
@@ -125,6 +141,15 @@ public class MazeGenerator extends JFrame {
     
     private void moveTo(int nextRow, int nextCol, //write this
             int firstDirection, int secondDirection){
+    	grid[row][col].setCurrent(false);
+        grid[row][col].addPath(firstDirection);//now in new cell
+        
+        row = nextRow;
+        col = nextCol;
+        
+        grid[row][col].setCurrent(true);
+        grid[row][col].addPath(secondDirection);
+        
         
     }
     
@@ -140,7 +165,7 @@ public class MazeGenerator extends JFrame {
             }
         }
         
-        //generateMaze(); //write this? //think about algorithm that generates the maze
+        generateMaze(); //write this? //think about algorithm that generates the maze
         row = 0;
         col = 0;
         endRow = rows - 1;
@@ -164,19 +189,53 @@ public class MazeGenerator extends JFrame {
         while (visitedCells < totalCells){
             //find all neighbors with all walls intact
             ArrayList<Cell> neighbors = new ArrayList();
+            
+            if ((isAvailable(r -1, c))) {//top neighbor
+            	neighbors.add(grid[r-1][c]); //add to the list of neighbors
+            }
+            
+            if ((isAvailable(r + 1, c))) {
+            	neighbors.add(grid[r+1][c]);
+            }
+            
+            if ((isAvailable(r, c - 1))) {
+            	neighbors.add(grid[r][c-1]);
+            }
+            
+            if ((isAvailable(r, c +1))) {
+            	neighbors.add(grid[r][c+1]);
+            }
           
         
             //if one or more found
+            if (neighbors.size() > 0) {
             
                 //if more than 1 found add this cell to the list and try again
+            	if (neighbors.size() > 1) {
+            		tryLaterCells.add(grid[r][c]); //add to trylatercells
+            	}
                 
                 //pick a neighbor and remove the wall
-                
+                int pick = rand.nextInt(neighbors.size());
+                Cell neighbor = neighbors.get(pick);
+                //remove wall
+                grid[r][c].openTo(neighbor);
         
                 //go to the neighbor and incrememnt the number visited
                 
                 //if none was found, go to one of the cells that was saved 
                 //to try later
+                r = neighbor.getRow();
+                c = neighbor.getCol();
+                visitedCells++;            	
+            }
+            else {
+            	//if none were found, go to one of the cells that were saved
+            	//to try later
+            	Cell nextCell = tryLaterCells.remove(0);
+            	r = nextCell.getRow();
+            	c = nextCell.getCol();
+            }
                
         
         }
@@ -184,8 +243,8 @@ public class MazeGenerator extends JFrame {
     
     private boolean isAvailable(int r, int c){
         boolean available = false;
-        if (r < rows && r >= 0 && c < cols && c >= 0){
-            if (grid[r][c].hasAllWalls()){
+        if (r < rows && r >= 0 && c < cols && c >= 0){//check if it's a valid spot
+            if (grid[r][c].hasAllWalls()){//checks if spot has all of its walls
                 available = true;
             }
         }
@@ -202,6 +261,7 @@ public class MazeGenerator extends JFrame {
             @Override
             public void run() {
                 new MazeGenerator();
+                //newMaze();
             }   
         });
     }

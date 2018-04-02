@@ -93,9 +93,9 @@ public class Cell extends JPanel {
     @Override
     public void paintComponent(Graphics g){
         //draw the background
-        g.setColor(Color.WHITE);
-        g.fillRect(0, 0, SIZE, SIZE);
         g.setColor(Color.BLACK);
+        g.fillRect(0, 0, SIZE, SIZE);
+        g.setColor(Color.MAGENTA);
        
         
         //draw the walls
@@ -108,20 +108,37 @@ public class Cell extends JPanel {
         
         
         //draw the path
-        g.setColor(Color.GREEN);
+        g.setColor(Color.cyan);
+        if (path[BOTTOM]) {
+        	g.drawLine(SIZE/2, SIZE/2, SIZE/2, SIZE);
+        }
+        if (path[TOP]) {
+        	g.drawLine(SIZE/2, 0, SIZE/2, SIZE/2);//begin at place where we ended, end in the middle of a cell
+        }
+      
+        if (path[LEFT]) {
+        	g.drawLine(0, SIZE/2, SIZE/2, SIZE/2);
+        }
+        if (path[RIGHT]) {
+        	g.drawLine(SIZE, SIZE/2, SIZE/2, SIZE/2);//begin at place where we ended, end in the middle of a cell
+        }
+        
         
         
         //draw the balls
         if (current == true) {
-        	g.setColor(Color.GREEN);
+        	g.setColor(Color.cyan);
             g.fillOval(SIZE/4, SIZE/4, SIZE - (SIZE/2), SIZE - (SIZE/2));
         }
         
         if (end == true) {
-        	g.setColor(Color.RED);
+        	g.setColor(Color.PINK);
             g.fillOval(SIZE/4, SIZE/4, SIZE - (SIZE/2), SIZE - (SIZE/2));
         }
     }
+    //public void reset() {
+		//setBackground(null);
+	//}
     
     
 }

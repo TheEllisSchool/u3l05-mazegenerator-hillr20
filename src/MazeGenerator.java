@@ -41,6 +41,9 @@ public class MazeGenerator extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         
         
+
+        
+        
         
     }
     
@@ -73,8 +76,11 @@ public class MazeGenerator extends JFrame {
         buttonPanel.setBackground(Color.BLACK);
         add(buttonPanel, BorderLayout.PAGE_END);
         JButton newMazeButton = new JButton("New Maze");
+        JButton newMazeButton2 = new JButton("Quit Game");
         newMazeButton.setFocusable(false);
+        newMazeButton2.setFocusable(false);
         buttonPanel.add(newMazeButton, BorderLayout.CENTER);
+        buttonPanel.add(newMazeButton2, BorderLayout.CENTER);
         
         
         
@@ -84,6 +90,18 @@ public class MazeGenerator extends JFrame {
                newMaze();
            } 
         });
+        
+        newMazeButton2.addActionListener(new ActionListener(){ //only action listener is on the 'New Maze Button' in the bottom
+        	@Override
+            public void actionPerformed(ActionEvent e){
+                //quit();
+            	System.exit(0);
+            	
+            	
+            } 
+         });
+        
+        
         
         addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e){ //waits for a key to be pressed; remembers which key
